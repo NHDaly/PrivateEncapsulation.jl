@@ -10,7 +10,7 @@ macro encapsulate(ex)
                  mutable struct T_ fields__ end) ||
         throw(ErrorException("Usage: @encapsulate struct ..."))
     return quote
-        $(esc(ex))
+        Base.@__doc__ $(esc(ex))
         function Base.getproperty(x::$(esc(T)), field::Symbol) where {$(esc.(params(T))...)}
             throw(EncapsulationViolation(x, field))
         end
