@@ -89,6 +89,15 @@ end
     @test @access(m.y) == 2
 end
 
+@testitem "docstrings" begin
+    """
+    MyStruct is great
+    """
+    @encapsulate struct MyStruct end
+
+    @test string(@doc(MyStruct)) == "MyStruct is great\n"
+end
+
 @testitem "@encapsulate macro errors" begin
     # @encapsulate must immediately be followed by a struct or mutable struct.
     @test_throws Exception @eval(@encapsulate begin struct S1 end ; struct S2 end end)
