@@ -6,28 +6,35 @@ using MacroTools: isexpr, namify
 
 export @encapsulate, @access, EncapsulationViolation
 
-struct EncapsulationViolation <: Exception
-    obj::Any
-    field::Symbol
-    mod::Union{Nothing,Module}
-end
-EncapsulationViolation(obj, field::Symbol) = EncapsulationViolation(obj, field, nothing)
+"""
+    @encapsulate struct S ... end
 
-function Base.showerror(io::IO, ex::EncapsulationViolation)
-    if ex.mod === nothing
-        println(io, "EncapsulationViolation: Illegal direct field access `getproperty(::",
-                typeof(ex.obj), ", ", Meta.quot(ex.field), ")`.\n",
-                "  Object: ", ex.obj, "\n\n",
-                "  Fields of this struct cannot be accessed from outside the module.",)
-    else
-        println(io, "EncapsulationViolation: Illegal call to `@access` from module `",
-                ex.mod, "` for `getproperty(::", typeof(ex.obj), ", ", Meta.quot(ex.field),
-                ")`.\n",
-                "  Object: ", ex.obj, "\n\n",
-                "  Fields of this struct cannot be accessed from outside the module.",)
-    end
-end
+Defines a struct `S` with private fields. The fields of the struct cannot be accessed
+directly from outside the module.
 
+Illegal access from outside the module throws an `EncapsulationViolation` exception.
+
+Within the module defining the struct, to access the fields, use `@access(x.field)`.
+See also:
+  - `@access` for accessing fields of the struct.
+"""
+macro encapsulate end
+
+"""
+    @access x.field
+    @access(x.field)
+
+Access `field` of the object `x`, a struct defined in the current module via the
+`@encapsulate` macro.
+
+Outside this module, `@access(x.field)` throws an `EncapsulationViolation` exception.
+
+See also:
+  - `@encapsulate`
+"""
+macro access end
+
+include("exception.jl")
 include("encapsulate.jl")
 
 end # module PrivateEncapsulation
