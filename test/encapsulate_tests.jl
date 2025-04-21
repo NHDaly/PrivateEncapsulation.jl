@@ -127,5 +127,5 @@ end
     @test_throws EncapsulationViolation(S2(1), :x) S2(1).x
     @test @access(S2(1).x) == 1
 
-    @test string(@doc(S2)) == "S2 is great\n"
+    @test repr(@doc(S2)) == "S2 is great\n"
 end
