@@ -6,25 +6,6 @@ using MacroTools: isexpr, namify
 
 export @encapsulate, @access, EncapsulationViolation
 
-# macro encapsulate(ex)
-#     @capture(ex, struct T_ <: ParentType_
-#         fields__
-#     end | struct T_
-#         fields__
-#     end) ||
-#         throw(ErrorException("@encapsulate struct ..."))
-#
-#     fieldnames = []
-#     for i in eachindex(fields)
-#         field = fields[i]
-#         @capture(field, fieldname_::FT_)
-#
-#         push!(fieldnames, fieldname_)
-#         end
-#     end
-#
-# end
-
 struct EncapsulationViolation <: Exception
     obj::Any
     field::Symbol
