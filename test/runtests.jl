@@ -1,6 +1,4 @@
+using ReTestItems
 using PrivateEncapsulation
-using Test
 
-@testset "PrivateEncapsulation.jl" begin
-    # Write your tests here.
-end
+ReTestItems.runtests(PrivateEncapsulation)
