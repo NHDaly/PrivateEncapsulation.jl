@@ -116,4 +116,16 @@ end
     s = S1(x = 1, y = 2)
     @test_throws EncapsulationViolation(s, :x) s.x
     @test @access(s.x) == 1
+
+    """
+    S2 is great
+    """
+    @encapsulate Base.@kwdef struct S2 <: A1
+        x
+    end
+    @test S2(x = 1) == S2(1)
+    @test_throws EncapsulationViolation(S2(1), :x) S2(1).x
+    @test @access(S2(1).x) == 1
+
+    @test string(@doc(S2)) == "S2 is great\n"
 end
