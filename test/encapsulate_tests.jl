@@ -90,6 +90,10 @@ end
 end
 
 @testitem "docstrings" begin
+    # Workaround for docstring test failures on nightly:
+    # https://github.com/JuliaLang/julia/issues/54664
+    using REPL
+
     """
     MyStruct is great
     """
@@ -107,6 +111,10 @@ end
 
 
 @testitem "@encapsulate composes with other macros" begin
+    # Workaround for docstring test failures on nightly:
+    # https://github.com/JuliaLang/julia/issues/54664
+    using REPL
+
     abstract type A1 end
     @test @eval(@encapsulate Base.@kwdef struct S1 <: A1
         x
@@ -127,5 +135,5 @@ end
     @test_throws EncapsulationViolation(S2(1), :x) S2(1).x
     @test @access(S2(1).x) == 1
 
-    @test repr(@doc(S2)) == "S2 is great\n"
+    @test string(@doc(S2)) == "S2 is great\n"
 end
