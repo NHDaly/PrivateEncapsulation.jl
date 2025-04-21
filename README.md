@@ -7,10 +7,12 @@
 ```julia
 julia> module MyVectors
            using PrivateEncapsulation: @encapsulate, @access
+
            @encapsulate struct MyStack{T}
                v::Vector{T}
            end
            MyStack{T}() where {T} = MyStack{T}(Vector{T}())
+
            Base.push!(v::MyStack, x) = (push!(@access(v.v), x); v)
            Base.pop!(v::MyStack) = pop!(@access(v.v))
            Base.length(v::MyStack) = length(@access(v.v))
