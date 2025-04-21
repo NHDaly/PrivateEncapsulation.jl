@@ -50,3 +50,49 @@ end
           Fields of this struct cannot be accessed from outside the module.
         """
 end
+
+@testitem "@encapsulate macro edge cases" begin
+    # (The macro returns the struct that was defined in the macro.)
+    @test @eval(@encapsulate struct S1 end) == @eval(S1)
+
+    abstract type A1 end
+    @test @eval(@encapsulate struct S2 <: A1
+        x
+    end) == @eval(S2)
+    @test_throws EncapsulationViolation(S2(1), :x) S2(1).x
+    # Inside the same module it's fine.
+    @test @access(S2(1).x) == 1
+
+    abstract type A2{T} end
+    @test @eval(@encapsulate struct S3{T1,T2} <: A2{T2}
+        x::T1
+        y::T2
+    end) == @eval(S3)
+    @test_throws EncapsulationViolation(S3(1, 2), :x) S3(1, 2).x
+    @test_throws EncapsulationViolation(S3(1, 2), :y) S3(1, 2).y
+    @test @access(S3(1,2).x) == 1
+    @test @access(S3(1,2).y) == 2
+
+    @test @eval(@encapsulate mutable struct M1 end) == @eval(M1)
+    @test @eval(@encapsulate mutable struct M2 <: A1 end) == @eval(M2)
+    @test @eval(@encapsulate mutable struct M3 <: A2{M3} end) == @eval(M3)
+
+    @test @eval(@encapsulate mutable struct M4 <: A1
+        x
+        y::Int
+    end) == @eval(M4)
+
+    m = M4(1, 2)
+    @test_throws EncapsulationViolation(m, :x) m.x
+    @test_throws EncapsulationViolation(m, :y) m.y
+    @test @access(m.x) == 1
+    @test @access(m.y) == 2
+end
+
+@testitem "@encapsulate macro errors" begin
+    # @encapsulate must immediately be followed by a struct or mutable struct.
+    @test_throws Exception @eval(@encapsulate begin struct S1 end ; struct S2 end end)
+    @test_throws Exception @eval(@encapsulate 10)
+    @test_throws Exception @eval(@encapsulate foo(x) = 2)
+end
+

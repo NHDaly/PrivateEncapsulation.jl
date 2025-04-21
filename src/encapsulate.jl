@@ -4,12 +4,11 @@ params(ex) = isexpr(ex, :curly) ? ex.args[2:end] : []
 tname(ex) = isexpr(ex, :curly) ? ex.args[1] : ex
 
 macro encapsulate(ex)
-    @capture(ex, struct T_ <: ParentType_
-        fields__
-    end | struct T_
-        fields__
-    end) ||
-        throw(ErrorException("@encapsulate struct ..."))
+    @capture(ex, struct T_ <: ParentType_ fields__ end |
+                 struct T_ fields__ end |
+                 mutable struct T_ <: ParentType_ fields__ end |
+                 mutable struct T_ fields__ end) ||
+        throw(ErrorException("Usage: @encapsulate struct ..."))
     return quote
         $(esc(ex))
         function Base.getproperty(x::$(esc(T)), field::Symbol) where {$(esc.(params(T))...)}
