@@ -96,3 +96,15 @@ end
     @test_throws Exception @eval(@encapsulate foo(x) = 2)
 end
 
+
+@testitem "@encapsulate composes with other macros" begin
+    abstract type A1 end
+    @test @eval(@encapsulate Base.@kwdef struct S1 <: A1
+        x
+        y::Int
+    end) == @eval(S1)
+    @test S1(x = 1, y = 2) == S1(1, 2)
+    s = S1(x = 1, y = 2)
+    @test_throws EncapsulationViolation(s, :x) s.x
+    @test @access(s.x) == 1
+end
