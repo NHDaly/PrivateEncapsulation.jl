@@ -1,19 +1,21 @@
 name = "PrivateEncapsulation"
 uuid = "acc5d4cc-5d5c-45c0-b1b0-dce7256bafe8"
-authors = ["Nathan Daly <nathan.daly@relational.ai> and contributors"]
 version = "1.0.0-DEV"
+authors = ["Nathan Daly <nathan.daly@relational.ai> and contributors"]
 
 [deps]
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 
 [compat]
-julia = "1.10"
 MacroTools = "0.5"
+REPL = "1"
 ReTestItems = "1"
+julia = "1.10"
 
 [extras]
+REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 ReTestItems = "817f1d60-ba6b-4fd5-9520-3cf149f6a823"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["ReTestItems","Test"]
+test = ["REPL", "ReTestItems", "Test"]
